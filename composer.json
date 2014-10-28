@@ -1,0 +1,21 @@
+{
+    "name": "bariew/finblack-extension",
+    "description": "Connects to finblack and receives data",
+    "type": "app-extension",
+    "keywords": ["extension","finblack"],
+    "license": "BSD-4-Clause",
+    "authors": [
+        {
+            "name": "Bariev Pavel",
+            "email": "bariew@yandex.ru"
+        }
+    ],
+    "require": {
+        "guzzle/guzzle": "3.9.*@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "bariew\\finblack\\": ""
+        }
+    }
+}
