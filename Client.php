@@ -99,7 +99,7 @@ class Client
     public function compare($params)
     {
         // we get all items by name and compare other fields below.
-        if (!$items = $this->getAll(['name_aliases' => $params['full_name']])) {
+        if (!$items = $this->getAll(['full_name' => $params['full_name']])) {
             return [];
         }
         $result = ['full_name' => true];
