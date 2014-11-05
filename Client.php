@@ -98,11 +98,12 @@ class Client
      */
     public function compare($params)
     {
-        $result = [];
         // we get all items by name and compare other fields below.
-        if (!$items = $this->getAll(['full_name' => $params['full_name']])) {
-            return $result;
+        if (!$items = $this->getAll(['name_aliases' => $params['full_name']])) {
+            return [];
         }
+        $result = ['full_name' => true];
+        unset($params['full_name']);
         // now we are looking for other matches.
         foreach ($items as $item) {
             $attributes = array_intersect_key($params, $item);
