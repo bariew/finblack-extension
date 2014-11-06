@@ -93,27 +93,65 @@ class Client
     /**
      * Searches for full_name and additionally compares other search params to received data attributes.
      * @param array $params search params.
+     * @param string $primary parameter for primary remote search. As others are compared locally.
      * @return array
-     * @throws \Exception
      */
-    public function compare($params)
+    public function compare($params, $primary = 'full_name')
     {
         // we get all items by name and compare other fields below.
-        if (!$items = $this->getAll(['full_name' => $params['full_name']])) {
+        if (!$items = $this->getAll([$primary => $params[$primary]])) {
             return [];
         }
-        $result = ['full_name' => true];
-        unset($params['full_name']);
+        $result = [$primary => true];
+        unset($params[$primary]);
         // now we are looking for other matches.
         foreach ($items as $item) {
             $attributes = array_intersect_key($params, $item);
             foreach ($attributes as $attribute => $value) {
-                $search = '/'.preg_quote($value).'/';
                 // if once this attribute matches - it is true for result.
-                $result[$attribute] = @$result[$attribute] || preg_match($search, $item[$attribute]);
+                $result[$attribute] = @$result[$attribute] || $this->match($value, $item[$attribute]);
             }
         }
         return $result;
+    }
+
+    /**
+     * Looks subject string matches for search string.
+     * It tries to find shuffled matches when "Moscow, Lenin, 25, 15"
+     * matches "Lenin street, 25/15, Moscow".
+     * @param string $search
+     * @param string $subject
+     * @return bool
+     */
+    private function match($search, $subject)
+    {
+//        $search = 'Ижевск, Удмуртская, 63, 2, 3'; // try to test it
+//        $subject = 'РФ, г.ИЖЕВСК, улица Удмуртская, д.63-2, кв.3';
+        $numberIndex = -1; // Pointer for numbers order.
+        $searches = preg_split('/\W+/', strtolower($search)); // we compare only letters and numbers.
+        $subjects = preg_split('/\W+/', strtolower($subject));
+        foreach ($searches as $key => $string) {
+            $index = array_search($string, $subjects, true);
+            if ($index === false) {
+                return false;
+            }
+            /**
+             * We don't want to compare to it again e.g. when there are
+             * two same numbers in search "12-12", and only one in subject "12-13" - remove first one!
+             */
+            $subjects[$index] = false;
+            /**
+             * Watching for search numbers to be in the same order as in the subject.
+             * Like "Moscow, Arbat, 2-12" IS NOT "Moscow, Arbat, 12-2"
+             */
+            if (is_numeric($string)) {
+                if ($numberIndex > $index) { // oops! we had already found previous number in LATER string.
+                    return false;
+                }
+                $numberIndex = $index;
+            }
+        }
+        return true;
     }
 
     /**
