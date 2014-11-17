@@ -82,57 +82,12 @@ class Client
          * @var \GuzzleHttp\Message\ResponseInterface $response
          */
         $response = $client->get($this->baseUrl . "/api/" . $method . "?" . $attributes);
+        //echo $this->baseUrl . "/api/" . $method . "?" . $attributes;exit;
         $result = $response->json();
         if ($response->getStatusCode() != 200) {
             throw new \Exception($response->getStatusCode() . ": " . $result["message"]);
         }
 
-        return $result;
-    }
-
-    /**
-     * Searches for full_name and additionally compares other search params to received data attributes.
-     * @param array $params search params.
-     * @return array
-     * @throws \Exception
-     */
-    public function compare($params)
-    {
-        // we get all items by name and compare other fields below.
-        if (!$items = $this->getAll(['full_name' => $params['full_name']])) {
-            return [];
-        }
-        $result = ['full_name' => true];
-        unset($params['full_name']);
-        // now we are looking for other matches.
-        foreach ($items as $item) {
-            $attributes = array_intersect_key($params, $item);
-            foreach ($attributes as $attribute => $value) {
-                $search = '/'.preg_quote($value).'/';
-                // if once this attribute matches - it is true for result.
-                $result[$attribute] = @$result[$attribute] || preg_match($search, $item[$attribute]);
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * Gets index data for all pages.
-     * @param $params
-     * @return array
-     * @throws \Exception
-     */
-    protected function getAll($params)
-    {
-        $lastResponse = [];
-        $result = [];
-        // when last response is the same as previous - it means that there are
-        // no more items in database - it's Yii2 rest pagination feature.
-        while (($response = $this->request('index', $params)) != $lastResponse) {
-            $lastResponse = $response;
-            $params['page'] = isset($params['page']) ? $params['page'] + 1 : 1;
-            $result = array_merge($result, $lastResponse);
-        }
         return $result;
     }
 } 
