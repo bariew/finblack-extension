@@ -12,20 +12,20 @@ namespace bariew\finblack;
  *
  * Usage:
  * 1. Getting all users by full name search.
-   $client = new \bariew\finblack\Client([
-        'baseUrl' => 'http://blacklist.dev',
-        'username' => 'pt',
-        'apiKey' => 123123
-    ]);
-    print_r($client->request('index', ['full_name' => 'asdf']));
+$client = new \bariew\finblack\Client([
+'baseUrl' => 'http://blacklist.dev',
+'username' => 'pt',
+'apiKey' => 123123
+]);
+print_r($client->request('index', ['full_name' => 'asdf']));
  *
  * 2.
-    $client = new \bariew\finblack\Client([
-        'baseUrl' => 'http://blacklist.dev',
-        'username' => 'pt',
-        'apiKey' => 123123
-    ]);
-    print_r($client->compare(['full_name' => 'tuan', 'list_type' => 1]));
+$client = new \bariew\finblack\Client([
+'baseUrl' => 'http://blacklist.dev',
+'username' => 'pt',
+'apiKey' => 123123
+]);
+print_r($client->compare(['full_name' => 'tuan', 'list_type' => 1]));
  *
  * @author Pavel Bariev <bariew@yandex.ru>
  */
@@ -71,13 +71,13 @@ class Client
     public function request($method, $params)
     {
         $client = new \GuzzleHttp\Client([
-            'defaults' => ['exceptions' => false]
-        ]);
+                'defaults' => ['exceptions' => false]
+            ]);
         $client->setDefaultOption('headers',  ["Accept: application/json"]);
         $attributes = http_build_query(array_merge([
-            'username' => $this->username,
-            'api_key' => $this->apiKey,
-        ], $params));
+                    'username' => $this->username,
+                    'api_key' => $this->apiKey,
+                ], $params));
         /**
          * @var \GuzzleHttp\Message\ResponseInterface $response
          */
