@@ -90,4 +90,25 @@ class Client
 
         return $result;
     }
+
+    /**
+     * Gets index data for all pages.
+     * @param $method
+     * @param $params
+     * @throws \Exception
+     * @return array
+     */
+    protected function getAll($method, $params)
+    {
+        $lastResponse = [];
+        $result = [];
+        // when last response is the same as previous - it means that there are
+        // no more items in database - it's Yii2 rest pagination feature.
+        while (($response = $this->request($method, $params)) != $lastResponse) {
+            $lastResponse = $response;
+            $params['page'] = isset($params['page']) ? $params['page'] + 1 : 1;
+            $result = array_merge($result, $lastResponse);
+        }
+        return $result;
+    }
 } 
