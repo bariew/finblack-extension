@@ -13,7 +13,7 @@ Usage:
         'username' => 'pt',
         'apiKey' => 123123
     ]);
-    print_r($client->request('index', ['full_name' => 'asdf']));
+    print_r($client->request('index', ['names' => 'asdf']));
 ```
 
 2. Searching user for matching.
@@ -23,6 +23,6 @@ Usage:
         'username' => 'pt',
         'apiKey' => 123123
     ]);
-    print_r($client->compare(['full_name' => 'tuan', 'list_type' => 1]));
+    print_r($client->request('compare', ['search' => ['names' => 'tuan', 'list_type' => 1], 'compare' => ['passport' => '1212 343434']]));
 ```
 
