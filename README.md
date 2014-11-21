@@ -16,4 +16,3 @@ Usage:
     print_r($client->request('index', ['names' => 'Petr Ivanov']));
 ```
 
-
