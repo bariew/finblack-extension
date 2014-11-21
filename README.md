@@ -13,16 +13,7 @@ Usage:
         'username' => 'pt',
         'apiKey' => 123123
     ]);
-    print_r($client->request('index', ['full_name' => 'asdf']));
+    print_r($client->request('index', ['names' => 'Petr Ivanov']));
 ```
 
-2. Searching user for matching.
-```
-    $client = new \bariew\finblack\Client([
-        'baseUrl' => 'http://blacklist.dev',
-        'username' => 'pt',
-        'apiKey' => 123123
-    ]);
-    print_r($client->compare(['full_name' => 'tuan', 'list_type' => 1]));
-```
 

@@ -8,24 +8,8 @@
 namespace bariew\finblack;
 
 /**
- * Description.
+ * Class for API requests. See README.
  *
- * Usage:
- * 1. Getting all users by full name search.
-$client = new \bariew\finblack\Client([
-'baseUrl' => 'http://blacklist.dev',
-'username' => 'pt',
-'apiKey' => 123123
-]);
-print_r($client->request('index', ['full_name' => 'asdf']));
- *
- * 2.
-$client = new \bariew\finblack\Client([
-'baseUrl' => 'http://blacklist.dev',
-'username' => 'pt',
-'apiKey' => 123123
-]);
-print_r($client->compare(['full_name' => 'tuan', 'list_type' => 1]));
  *
  * @author Pavel Bariev <bariew@yandex.ru>
  */
@@ -71,13 +55,13 @@ class Client
     public function request($method, $params)
     {
         $client = new \GuzzleHttp\Client([
-                'defaults' => ['exceptions' => false]
-            ]);
+            'defaults' => ['exceptions' => false]
+        ]);
         $client->setDefaultOption('headers',  ["Accept: application/json"]);
         $attributes = http_build_query(array_merge([
-                    'username' => $this->username,
-                    'api_key' => $this->apiKey,
-                ], $params));
+            'username' => $this->username,
+            'api_key' => $this->apiKey,
+        ], $params));
         /**
          * @var \GuzzleHttp\Message\ResponseInterface $response
          */
@@ -92,21 +76,22 @@ class Client
     }
 
     /**
-     * Gets index data for all pages.
+     * Gets data for all pages.
      * @param $method
      * @param $params
      * @throws \Exception
      * @return array
      */
-    protected function getAll($method, $params)
+    public function getAll($method, $params)
     {
         $lastResponse = [];
         $result = [];
+        $params['page'] = 1;
         // when last response is the same as previous - it means that there are
         // no more items in database - it's Yii2 rest pagination feature.
         while (($response = $this->request($method, $params)) != $lastResponse) {
             $lastResponse = $response;
-            $params['page'] = isset($params['page']) ? $params['page'] + 1 : 1;
+            $params['page']++;
             $result = array_merge($result, $lastResponse);
         }
         return $result;
